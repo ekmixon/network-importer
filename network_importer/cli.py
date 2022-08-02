@@ -71,8 +71,7 @@ def init(config_file):
     # Disable logging in console for DiffSync
     enable_console_logging(verbosity=0)
 
-    ni = NetworkImporter()
-    return ni
+    return NetworkImporter()
 
 
 @click.option(

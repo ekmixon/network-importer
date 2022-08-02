@@ -58,7 +58,7 @@ def test_create_prefix(requests_mock, netbox_api_base):
         diffsync=netbox_api_base, ids=dict(prefix="10.1.111.0/24", site_name="HQ"), attrs={}
     )
 
-    assert isinstance(ip_address, NetboxPrefix) is True
+    assert isinstance(ip_address, NetboxPrefix)
     assert ip_address.remote_id == 44
     assert ip_address.vlan is None
 
@@ -87,7 +87,7 @@ def test_create_prefix_with_vlan(requests_mock, netbox_api_base):
         diffsync=netbox_api_base, ids=dict(prefix="10.1.111.0/24", site_name="HQ"), attrs=dict(vlan="HQ__111")
     )
 
-    assert isinstance(prefix, NetboxPrefix) is True
+    assert isinstance(prefix, NetboxPrefix)
     assert prefix.remote_id == 44
     assert prefix.vlan == "HQ__111"
 

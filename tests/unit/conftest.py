@@ -186,7 +186,7 @@ def backend_b():
 @pytest.fixture
 def diff_children_nyc_dev1():
     """Fixture dict of DiffElement."""
-    children = dict()
+    children = {}
     device_name = "nyc-dev1"
     site_name = "nyc"
     for intf_name, intf in BackendB.DATA[site_name][device_name]["interfaces"].items():
@@ -240,10 +240,9 @@ def network_importer_base():
 @pytest.fixture
 def empty_netbox_query():
     """Return an empty list to a list query."""
-    value = {
+    return {
         "count": 0,
         "next": None,
         "previous": None,
         "results": [],
     }
-    return value

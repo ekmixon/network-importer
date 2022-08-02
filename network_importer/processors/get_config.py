@@ -35,9 +35,9 @@ class GetConfig(BaseProcessor):
 
     def __init__(self) -> None:
         """Initialize the processor and ensure some variables are properly initialized."""
-        self.current_md5 = dict()
-        self.previous_md5 = dict()
-        self.config_filename = dict()
+        self.current_md5 = {}
+        self.previous_md5 = {}
+        self.config_filename = {}
         self.config_dir = None
         self.existing_config_hostnames = None
 
@@ -55,7 +55,7 @@ class GetConfig(BaseProcessor):
             os.mkdir(config.SETTINGS.main.configs_directory)
             LOGGER.debug("Configs directory created at %s", config.SETTINGS.main.configs_directory)
 
-        self.config_dir = config.SETTINGS.main.configs_directory + "/configs"
+        self.config_dir = f"{config.SETTINGS.main.configs_directory}/configs"
 
         if not os.path.isdir(self.config_dir):
             os.mkdir(self.config_dir)

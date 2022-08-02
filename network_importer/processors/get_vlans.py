@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import logging
 from typing import List
 
@@ -21,12 +22,6 @@ from network_importer.processors import BaseProcessor
 
 LOGGER = logging.getLogger("network-importer")
 
-# pylint: disable=too-few-public-methods
-
-
-# ------------------------------------------------------------
-# Standard model to return for get_vlans
-# ------------------------------------------------------------
 class Vlan(BaseModel):
     """Dataclass model to store one vlan returned by get_vlans."""
 
@@ -34,14 +29,14 @@ class Vlan(BaseModel):
     vid: int
 
 
+
+
 class Vlans(BaseModel):
     """Dataclass model to store Vlans returned by get_vlans."""
 
-    vlans: List[Vlan] = list()
+    vlans: List[Vlan] = []
 
 
-# ------------------------------------------------------------
-# Processor
-# ------------------------------------------------------------
+
 class GetVlans(BaseProcessor):
     """Placeholder for GetVlans processor, currently using the BaseProcessor."""

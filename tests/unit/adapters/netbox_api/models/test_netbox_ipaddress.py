@@ -70,11 +70,16 @@ def test_create_ip_address_interface(requests_mock, netbox_api_base):
     requests_mock.post("http://mock/api/ipam/ip-addresses/", json=data, status_code=201)
     ip_address = NetboxIPAddress.create(
         diffsync=netbox_api_base,
-        ids=dict(address="10.63.0.2/31", interface_name="TenGigabitEthernet1/0/1", device_name="HQ-CORE-SW02"),
-        attrs=dict(),
+        ids=dict(
+            address="10.63.0.2/31",
+            interface_name="TenGigabitEthernet1/0/1",
+            device_name="HQ-CORE-SW02",
+        ),
+        attrs={},
     )
 
-    assert isinstance(ip_address, NetboxIPAddress) is True
+
+    assert isinstance(ip_address, NetboxIPAddress)
     assert ip_address.remote_id == 15
 
 
@@ -86,9 +91,14 @@ def test_create_ip_address_no_interface(requests_mock, netbox_api_base):
     requests_mock.post("http://mock/api/ipam/ip-addresses/", json=data, status_code=201)
     ip_address = NetboxIPAddress.create(
         diffsync=netbox_api_base,
-        ids=dict(address="10.63.0.2/31", interface_name="TenGigabitEthernet1/0/1", device_name="HQ-CORE-SW02"),
-        attrs=dict(),
+        ids=dict(
+            address="10.63.0.2/31",
+            interface_name="TenGigabitEthernet1/0/1",
+            device_name="HQ-CORE-SW02",
+        ),
+        attrs={},
     )
 
-    assert isinstance(ip_address, NetboxIPAddress) is True
+
+    assert isinstance(ip_address, NetboxIPAddress)
     assert ip_address.remote_id == 15

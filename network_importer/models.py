@@ -12,9 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from typing import List, Optional
 
 from diffsync import DiffSyncModel
+
+
 
 
 class Site(DiffSyncModel):
@@ -28,8 +31,11 @@ class Site(DiffSyncModel):
     _children = {"vlan": "vlans", "prefix": "prefixes"}
 
     name: str
-    prefixes: List = list()
-    vlans: List[str] = list()
+    prefixes: List = []
+    vlans: List[str] = []
+
+
+
 
 
 class Device(DiffSyncModel):
@@ -45,7 +51,7 @@ class Device(DiffSyncModel):
 
     name: str
     site_name: Optional[str]
-    interfaces: List = list()
+    interfaces: List = []
 
     platform: Optional[str]
     model: Optional[str]
@@ -53,7 +59,10 @@ class Device(DiffSyncModel):
     vendor: Optional[str]
 
 
-class Interface(DiffSyncModel):  # pylint: disable=too-many-instance-attributes
+
+
+
+class Interface(DiffSyncModel):    # pylint: disable=too-many-instance-attributes
     """Interface Model based on DiffSyncModel.
 
     An interface must be attached to a device and the name must be unique per device.
@@ -90,11 +99,12 @@ class Interface(DiffSyncModel):  # pylint: disable=too-many-instance-attributes
     is_lag_member: Optional[bool]
     parent: Optional[str]
 
-    lag_members: List[str] = list()
-    allowed_vlans: List[str] = list()
+    lag_members: List[str] = []
+    allowed_vlans: List[str] = []
     access_vlan: Optional[str]
 
-    ips: List[str] = list()
+    ips: List[str] = []
+
 
 
 class IPAddress(DiffSyncModel):

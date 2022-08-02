@@ -150,12 +150,12 @@ class NetboxInventory(Inventory):
             # Add value for IP address
             if use_primary_ip and dev.primary_ip:
                 host["hostname"] = dev.primary_ip.address.split("/")[0]
-            elif use_primary_ip and not dev.primary_ip:
+            elif use_primary_ip:
                 host["data"]["is_reachable"] = False
                 host["data"]["not_reachable_reason"] = "primary ip not defined in Netbox"
-            elif not use_primary_ip and fqdn:
+            elif fqdn:
                 host["hostname"] = f"{dev.name}.{fqdn}"
-            elif not use_primary_ip:
+            else:
                 host["hostname"] = dev.name
 
             host["data"]["serial"] = dev.serial
@@ -172,11 +172,7 @@ class NetboxInventory(Inventory):
             if dev.platform and dev.platform.slug in platforms_mapping:
                 host["connection_options"] = {"napalm": {"platform": platforms_mapping[dev.platform.slug]}}
 
-            if dev.platform:
-                host["platform"] = dev.platform.slug
-            else:
-                host["platform"] = None
-
+            host["platform"] = dev.platform.slug if dev.platform else None
             host["groups"] = ["global", dev.site.slug, dev.device_role.slug]
 
             if dev.site.slug not in groups.keys():
@@ -211,10 +207,7 @@ def valid_devs(host):
     Returns:
         bool: True if the device has a config, False otherwise.
     """
-    if host.data["has_config"]:
-        return True
-
-    return False
+    return bool(host.data["has_config"])
 
 
 def non_valid_devs(host):
@@ -228,10 +221,7 @@ def non_valid_devs(host):
     Returns:
         bool: True if the device do not have a config, False otherwise.
     """
-    if host.data["has_config"]:
-        return False
-
-    return True
+    return not host.data["has_config"]
 
 
 def reachable_devs(host):
@@ -245,10 +235,7 @@ def reachable_devs(host):
     Returns:
         bool: True if the device is reachable, False otherwise.
     """
-    if host.data["is_reachable"]:
-        return True
-
-    return False
+    return bool(host.data["is_reachable"])
 
 
 def non_reachable_devs(host):
@@ -262,10 +249,7 @@ def non_reachable_devs(host):
     Returns:
         bool: True if the device is not reachable, False otherwise.
     """
-    if host.data["is_reachable"]:
-        return False
-
-    return True
+    return not host.data["is_reachable"]
 
 
 def valid_and_reachable_devs(host):
@@ -279,7 +263,4 @@ def valid_and_reachable_devs(host):
     Returns:
         bool: True if the device is reachable and has a config, False otherwise.
     """
-    if host.data["is_reachable"] and host.data["has_config"]:
-        return True
-
-    return False
+    return bool(host.data["is_reachable"] and host.data["has_config"])

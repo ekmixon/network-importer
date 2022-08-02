@@ -33,9 +33,7 @@ def is_truthy(arg):
         arg (str): Truthy string (True values are y, yes, t, true, on and 1; false values are n, no,
         f, false, off and 0. Raises ValueError if val is anything else.
     """
-    if isinstance(arg, bool):
-        return arg
-    return bool(strtobool(arg))
+    return arg if isinstance(arg, bool) else bool(strtobool(arg))
 
 
 # Can be set to a separate Python version to be used for launching or building image
@@ -75,12 +73,13 @@ def run_cmd(context, exec_cmd, name=NAME, image_ver=IMAGE_VER, local=INVOKE_LOCA
     """
     if is_truthy(local):
         print(f"LOCAL - Running command {exec_cmd}")
-        result = context.run(exec_cmd, pty=True)
+        return context.run(exec_cmd, pty=True)
     else:
         print(f"DOCKER - Running command: {exec_cmd} container: {name}:{image_ver}")
-        result = context.run(f"docker run -it -v {PWD}:/local {name}:{image_ver} sh -c '{exec_cmd}'", pty=True)
-
-    return result
+        return context.run(
+            f"docker run -it -v {PWD}:/local {name}:{image_ver} sh -c '{exec_cmd}'",
+            pty=True,
+        )
 
 
 @task

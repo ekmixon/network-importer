@@ -33,13 +33,16 @@ def patch_http_connection_pool(**constructor_kwargs):
       **constructor_kwargs:
     """
 
+
+
     class MyHTTPConnectionPool(connectionpool.HTTPConnectionPool):
         """Class to increase the size of the HTTP Connection pool."""
 
         def __init__(self, *args, **kwargs):
             """Initialize the HTTP Connection pool."""
-            kwargs.update(constructor_kwargs)
+            kwargs |= constructor_kwargs
             super().__init__(*args, **kwargs)
+
 
     poolmanager.pool_classes_by_scheme["http"] = MyHTTPConnectionPool
 
@@ -57,7 +60,7 @@ def sort_by_digits(if_name: str) -> tuple:
     return tuple(map(int, find_digit.findall(if_name)))
 
 
-def is_interface_physical(name):  # pylint: disable=R0911
+def is_interface_physical(name):    # pylint: disable=R0911
     """Function evaluate if an interface is likely to be a physical interface.
 
     Args:
@@ -79,10 +82,6 @@ def is_interface_physical(name):  # pylint: disable=R0911
     loopback = r"^(L|l)(oopback|o)[0-9]+$"
     vlan = r"^(V|v)(lan)[0-9]+$"
 
-    # Generic physical interface match
-    #  mainly looking for <int>/<int> or <int>/<int>/<int> at the end
-    generic_physical_intf = r"^[a-zA-Z\-]+[0-9]+\/[0-9\/\:]+$"
-
     # Match Juniper Interfaces
     jnpr_physical_intf = r"^[a-z]+\-[0-9\/\:]+$"
 
@@ -96,10 +95,11 @@ def is_interface_physical(name):  # pylint: disable=R0911
         return False
     if re.match(jnpr_physical_intf, name):
         return True
-    if re.match(generic_physical_intf, name):
-        return True
+    # Generic physical interface match
+    #  mainly looking for <int>/<int> or <int>/<int>/<int> at the end
+    generic_physical_intf = r"^[a-zA-Z\-]+[0-9]+\/[0-9\/\:]+$"
 
-    return None
+    return True if re.match(generic_physical_intf, name) else None
 
 
 def is_interface_lag(name):
@@ -114,18 +114,15 @@ def is_interface_lag(name):
     port_channel_intf = r"^port\-channel[0-9]+$"
     po_intf = r"^po[0-9]+$"
     ae_intf = r"^ae[0-9]+$"
-    bundle_intf = r"^Bundle\-Ether[0-9]+$"
-
     if re.match(port_channel_intf, name.lower()):
         return True
     if re.match(ae_intf, name):
         return True
     if re.match(po_intf, name):
         return True
-    if re.match(bundle_intf, name):
-        return True
+    bundle_intf = r"^Bundle\-Ether[0-9]+$"
 
-    return None
+    return True if re.match(bundle_intf, name) else None
 
 
 def is_mac_address(data):
@@ -147,10 +144,7 @@ def is_mac_address(data):
         return False
 
     hex_data = re.findall(hex_chars, data)
-    if len(hex_data) == 12:
-        return True
-
-    return False
+    return len(hex_data) == 12
 
 
 def jinja_filter_toyaml_list(value) -> str:
@@ -189,7 +183,7 @@ def expand_vlans_list(vlans: str) -> list:
     raw_vlans_list = []
     clean_vlans_list = []
 
-    vlans_csv = str(vlans).split(",")
+    vlans_csv = vlans.split(",")
 
     for vlan in vlans_csv:
         min_max = str(vlan).split("-")

@@ -44,11 +44,6 @@ def query_device_info_from_netbox(task: Task) -> Result:
         session.verify = False
         netbox.http_session = session
 
-    results = {
-        "device": None,
-        "interfaces": None,
-    }
-
     device = netbox.dcim.devices.filter(name=task.host.name)
 
     if len(device) > 1:
@@ -59,8 +54,7 @@ def query_device_info_from_netbox(task: Task) -> Result:
         LOGGER.warning("No device returned from Netbox for %s", task.host.name)
         return Result(host=task.host, failed=True)
 
-    results["device"] = dict(device[0])
-
+    results = {"interfaces": None, "device": dict(device[0])}
     # TODO move the logic to pull the interface and potentially IP here
     # interfaces = netbox.dcim.interfaces.filter(device=task.host.name)
     # results["interfaces"] = [ dict(intf) for intf in interfaces ]

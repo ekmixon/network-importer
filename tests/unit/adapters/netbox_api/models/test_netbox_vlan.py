@@ -33,7 +33,7 @@ def test_vlan_create_from_pynetbox(netbox_api_base):
     pnb = pynetbox.core.response.Record(values=data, api=api, endpoint=1)
 
     item = NetboxVlan.create_from_pynetbox(diffsync=netbox_api_base, obj=pnb, site_name="nyc")
-    assert isinstance(item, NetboxVlan) is True
+    assert isinstance(item, NetboxVlan)
     assert item.remote_id == 1
     assert item.vid == 101
     assert item.associated_devices == []
@@ -49,7 +49,7 @@ def test_vlan_create_from_pynetbox_with_tags(netbox_api_base):
     netbox_api_base.add(NetboxDevice(name="devA", site_name="nyc", remote_id=30))
 
     item = NetboxVlan.create_from_pynetbox(diffsync=netbox_api_base, obj=pnb, site_name="nyc")
-    assert isinstance(item, NetboxVlan) is True
+    assert isinstance(item, NetboxVlan)
     assert item.remote_id == 1
     assert item.vid == 101
     assert item.associated_devices == ["devA"]
@@ -57,7 +57,7 @@ def test_vlan_create_from_pynetbox_with_tags(netbox_api_base):
     # Try again with one additional device in the inventory
     netbox_api_base.add(NetboxDevice(name="devB", site_name="nyc", remote_id=31))
     item = NetboxVlan.create_from_pynetbox(diffsync=netbox_api_base, obj=pnb, site_name="nyc")
-    assert isinstance(item, NetboxVlan) is True
+    assert isinstance(item, NetboxVlan)
     assert item.remote_id == 1
     assert item.vid == 101
     assert item.associated_devices == ["devA", "devB"]
@@ -133,7 +133,6 @@ def test_translate_attrs_for_netbox_missing_site(netbox_api_base):
 
     with pytest.raises(ObjectNotFound):
         vlan.translate_attrs_for_netbox({})
-        assert True
 
 
 def test_update_clean_tags_no_incoming_tags(netbox_api_base):

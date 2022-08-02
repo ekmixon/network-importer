@@ -39,16 +39,17 @@ def nornir(requests_mock):
     data2 = yaml.safe_load(open(f"{HERE}/{FIXTURES}/platforms.json"))
     requests_mock.get("http://mock/api/dcim/platforms/", json=data2)
 
-    nornir = InitNornir(
+    return InitNornir(
         core={"num_workers": 1},
         logging={"enabled": False},
         inventory={
             "plugin": "network_importer.inventory.NetboxInventory",
-            "options": {"nb_url": "http://mock", "nb_token": "12349askdnfanasdf"},
+            "options": {
+                "nb_url": "http://mock",
+                "nb_token": "12349askdnfanasdf",
+            },
         },
     )
-
-    return nornir
 
 
 def get_neighbors(task: Task, neighbors) -> Result:

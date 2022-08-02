@@ -137,13 +137,13 @@ class NetBoxAPIAdapter(BaseAdapter):
             nb_device = result["device"]
             site_name = nb_device["site"].get("slug")
 
-            if site_name not in sites.keys():
+            if site_name in sites:
+                site = sites[site_name]
+
+            else:
                 site = self.site(name=site_name, remote_id=nb_device["site"].get("id"))
                 sites[site_name] = site
                 self.add(site)
-            else:
-                site = sites[site_name]
-
             device = self.device(name=device_name, site_name=site_name, remote_id=nb_device["id"])
 
             if nb_device["primary_ip"]:
@@ -218,7 +218,7 @@ class NetBoxAPIAdapter(BaseAdapter):
 
     def convert_interface_from_netbox(
         self, device, intf, site=None
-    ):  # pylint: disable=too-many-branches,too-many-statements
+    ):    # pylint: disable=too-many-branches,too-many-statements
         """Convert PyNetBox interface object to NetBoxInterface model.
 
         Args:
@@ -234,10 +234,7 @@ class NetBoxAPIAdapter(BaseAdapter):
             mtu=intf.mtu,
         )
 
-        import_vlans = False
-        if config.SETTINGS.main.import_vlans not in [False, "no"]:
-            import_vlans = True
-
+        import_vlans = config.SETTINGS.main.import_vlans not in [False, "no"]
         # Define status if it's enabled in the config file
         if config.SETTINGS.main.import_intf_status:
             interface.active = intf.enabled
@@ -275,19 +272,18 @@ class NetBoxAPIAdapter(BaseAdapter):
             interface.mode = "NONE"
 
         # Identify Interface Speed based on the type
-        if intf.type and intf.type.value == 800:
-            interface.speed = 1000000000
-        elif intf.type and intf.type.value == 1100:
-            interface.speed = 1000000000
-        elif intf.type and intf.type.value == 1200:
-            interface.speed = 10000000000
-        elif intf.type and intf.type.value == 1350:
-            interface.speed = 25000000000
-        elif intf.type and intf.type.value == 1400:
-            interface.speed = 40000000000
-        elif intf.type and intf.type.value == 1600:
-            interface.speed = 100000000000
+        if intf.type:
+            if intf.type.value == 1200:
+                interface.speed = 10000000000
+            elif intf.type.value == 1350:
+                interface.speed = 25000000000
+            elif intf.type.value == 1400:
+                interface.speed = 40000000000
+            elif intf.type.value == 1600:
+                interface.speed = 100000000000
 
+            elif intf.type.value in [800, 1100]:
+                interface.speed = 1000000000
         if site and intf.tagged_vlans and import_vlans:
             for vid in [v.vid for v in intf.tagged_vlans]:
                 try:

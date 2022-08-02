@@ -49,11 +49,8 @@ def print_from_ms(msec) -> str:
     seconds = math.floor(((msec - (ms_per_min * minutes)) / ms_per_sec))
     millis = msec - (ms_per_min * minutes) - (ms_per_sec * seconds)
 
-    if minutes == 0 and seconds == 0:
-        return "%dms" % (millis)
     if minutes == 0:
-        return "%ds %dms" % (seconds, millis)
-
+        return "%dms" % (millis) if seconds == 0 else "%ds %dms" % (seconds, millis)
     return "%dm %ds %dms" % (minutes, seconds, millis)
 
 
@@ -98,7 +95,10 @@ class TimeTracker:
             LOGGER.debug("Directory %s was missing, created it", config.SETTINGS.logs.performance_log_directory)
 
         perflog_filename = strftime("%Y-%m-%d_%H-%M-%S.log")
-        perflog_file_path = config.SETTINGS.logs.performance_log_directory + "/" + perflog_filename
+        perflog_file_path = (
+            f"{config.SETTINGS.logs.performance_log_directory}/{perflog_filename}"
+        )
+
 
         with open(perflog_file_path, "w") as file_:
 

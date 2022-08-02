@@ -50,10 +50,7 @@ def hosts_for_cabling(host):
     Returns:
         bool: True if the device is eligible for cabling, False otherwise.
     """
-    if host.platform in config.SETTINGS.main.excluded_platforms_cabling:
-        return False
-
-    return True
+    return host.platform not in config.SETTINGS.main.excluded_platforms_cabling
 
 
 # -----------------------------------------------------------------

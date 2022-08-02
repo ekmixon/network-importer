@@ -68,13 +68,13 @@ class NetworkImporterAdapter(BaseAdapter):
 
             self.nornir.inventory.hosts[hostname].data["has_config"] = True
 
-            if host.data["site"] not in sites.keys():
+            if host.data["site"] in sites:
+                site = sites[host.data["site"]]
+
+            else:
                 site = self.site(name=host.data["site"])
                 sites[host.data["site"]] = site
                 self.add(site)
-            else:
-                site = sites[host.data["site"]]
-
             device = self.device(name=hostname, site_name=host.data["site"])
             self.add(device)
 
@@ -162,7 +162,7 @@ class NetworkImporterAdapter(BaseAdapter):
 
     def load_batfish_interface(
         self, site, device, intf, interface_vlans=[]
-    ):  # pylint: disable=dangerous-default-value,unused-argument,too-many-statements,too-many-branches,too-many-locals
+    ):    # pylint: disable=dangerous-default-value,unused-argument,too-many-statements,too-many-branches,too-many-locals
         """Load an interface for a given device from Batfish Data, including IP addresses and prefixes.
 
         Args:
@@ -200,9 +200,7 @@ class NetworkImporterAdapter(BaseAdapter):
             interface.description = intf["Description"].strip()
 
         is_physical = is_interface_physical(interface.name)
-        is_lag = is_interface_lag(interface.name)
-
-        if is_lag:
+        if is_lag := is_interface_lag(interface.name):
             interface.is_lag = True
             interface.is_virtual = False
         elif is_physical is False:  # pylint: disable=C0121
@@ -215,10 +213,14 @@ class NetworkImporterAdapter(BaseAdapter):
 
         if config.SETTINGS.main.import_intf_status:
             interface.active = intf["Active"]
-        elif not config.SETTINGS.main.import_intf_status:
+        else:
             interface.active = None
 
-        if interface.is_lag is None and interface.lag_members is None and len(list(intf["Channel_Group_Members"])) != 0:
+        if (
+            interface.is_lag is None
+            and interface.lag_members is None
+            and list(intf["Channel_Group_Members"])
+        ):
             interface.lag_members = list(intf["Channel_Group_Members"])
             interface.is_lag = True
             interface.is_virtual = False
@@ -486,7 +488,7 @@ class NetworkImporterAdapter(BaseAdapter):
             if intf.allowed_vlans:
                 clean_allowed_vlans = []
                 for vlan in intf.allowed_vlans:
-                    if vlan in vlans.keys():
+                    if vlan in vlans:
                         clean_allowed_vlans.append(vlan)
                         vlans[vlan].add_device(intf.device_name)
 

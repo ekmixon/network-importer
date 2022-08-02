@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 # pylint: disable=invalid-name,redefined-outer-name
 
 import os
@@ -35,9 +36,6 @@ DEFAULT_DRIVERS_MAPPING = {
     "arista_eos": "network_importer.drivers.arista_eos",
 }
 
-# pylint: disable=too-few-public-methods,global-statement
-
-
 class BatfishSettings(BaseSettings):
     """Settings definition for the Batfish section of the configuration."""
 
@@ -58,6 +56,8 @@ class BatfishSettings(BaseSettings):
         }
 
 
+
+
 class NetboxSettings(BaseSettings):
     """Settings definition for the Netbox section of the configuration."""
 
@@ -65,16 +65,12 @@ class NetboxSettings(BaseSettings):
     token: Optional[str]
     verify_ssl: bool = True
 
-    model_flag_tags: List[str] = list()  # List of tags that defines what objects to assign the model_flag to.
+    model_flag_tags: List[str] = []
     model_flag: Optional[DiffSyncModelFlags]  # The model flag that will be applied to objects based on tag.
 
     """Define a list of supported platform,
     if defined all devices without platform or with a different platforms will be removed from the inventory"""
-    supported_platforms: List[str] = list()
-
-    # Currently not used in 2.x, need to add them back
-    # cacert: Optional[str]
-    # request_ssl_verify: bool = False
+    supported_platforms: List[str] = []
 
     class Config:
         """Additional parameters to automatically map environment variable to some settings."""
@@ -86,6 +82,9 @@ class NetboxSettings(BaseSettings):
         }
 
 
+
+
+
 class NetworkSettings(BaseSettings):
     """Settings definition for the Network section of the configuration."""
 
@@ -95,7 +94,7 @@ class NetworkSettings(BaseSettings):
     global_delay_factor: int = 5
     banner_timeout: int = 15
     conn_timeout: int = 5
-    fqdns: List[str] = list()  # List of valid FQDN that can be found in the network
+    fqdns: List[str] = []
 
     class Config:
         """Additional parameters to automatically map environment variable to some settings."""
@@ -105,6 +104,7 @@ class NetworkSettings(BaseSettings):
             "password": {"env": "NETWORK_DEVICE_PWD"},
             "enable": {"env": "NETWORK_DEVICE_ENABLE"},
         }
+
 
 
 class LogsSettings(BaseSettings):
@@ -121,13 +121,15 @@ class LogsSettings(BaseSettings):
     # change_log_filename: str = "changelog"
 
 
+
+
 class MainSettings(BaseSettings):
     """Settings definition for the Main section of the configuration."""
 
     import_ips: bool = True
     import_prefixes: bool = False
     import_cabling: Union[bool, Literal["lldp", "cdp", "config", "no"]] = "lldp"
-    excluded_platforms_cabling: List[str] = list()
+    excluded_platforms_cabling: List[str] = []
 
     import_vlans: Union[bool, Literal["config", "cli", "no"]] = "config"
     import_intf_status: bool = False
@@ -139,6 +141,7 @@ class MainSettings(BaseSettings):
     # NOT SUPPORTED CURRENTLY
     generate_hostvars: bool = False
     hostvars_directory: str = "host_vars"
+
 
 
 class AdaptersSettings(BaseSettings):
